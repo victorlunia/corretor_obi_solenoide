@@ -1,6 +1,7 @@
 import csv
 import os
 from subprocess import call
+import send_email as s
 
 # as pastas "codigos", "entradas" e "saidas", já devem estar criadas.
 
@@ -19,6 +20,11 @@ def make_dir():
 		pass
 	else:
 		os.mkdir("cout")
+
+	if os.path.isdir("codigos_corrigidos"):
+		pass
+	else:
+		os.mkdir("codigos_corrigidos")
 
 def count_lines(output_correct):
 	# conta a qtd de linhas para mostrar a porcentagem de acerto
@@ -85,6 +91,14 @@ def correct(output_correct, file_output):
 
 	return ((correct/qtd_lines_file_ok)*100, incorrect_rows)
 
+def send_email_resp(assunto, text, email):
+	server = s.connectSmtp()
+	s.attempLogin(server)
+
+	s.send_email(server, assunto, text, email)
+
+	server.quit()
+
 def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 	"""
 	Responsável por compilar, executar e verificar as respostas
@@ -109,23 +123,35 @@ def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 			# nome do arquivo de saidas do executavel
 			name_output_cout = row[0] + "_" + exercicio + ".txt"
 
+			text_email = ""
+			assunto_email = "[OBI2018] " + row[1] + ", os resultados do seu código!"
+
 			if(search_file(name)):
 				# compila o codigo
 				if(compile(name, name_output_bin)):
 					# testa as entradas
-					print("nome:", row[1])
-					for i, cin in enumerate(arq_entradas):
+					text_email += "Eaeeee " + row[1].split(' ')[0] + " Blz? olha ae o resultado dos testes:\n"
+					for i, cin in enumerate(arq_entradas): 
 						# executa
 						if(execute(name_output_bin, cin, name_output_cout)):
 							# verifica corretude
-							print("arquivo", i+1, correct(arq_saida[i], name_output_cout)[0], "% correto")
+							text_email += "arquivo teste: " + str(i+1) + " " + str(correct(arq_saida[i], name_output_cout)[0]) + "% correto" + "\n"
 						else:
-							print("entrou em loop")
+							text_email += "entrou em loop, verifique novamente seu código!"
 				else:
-					print("erro de compilação meu chapa!")
+					text_email += "erro de compilação meu chapa!"
+
+				# envia email pro camarada
+				send_email_resp(assunto_email, text_email, row[2])
+				os.system("mv codigos/" + name + " " + "codigos_corrigidos")
+				print(text_email)
+
+	# apaga os arquivos criados
+	os.system("./apagar.sh")
+
 
 arq_csv = "nomes.csv"
-arq_entradas = ["entrada_e1_1.txt","entrada_e1_2.txt"]
-arq_saida = ["saida_e1_1.txt", "saida_e1_2.txt"]
+arq_entradas = ["entrada_e1_3.txt"]
+arq_saida = ["saida_e1_3.txt"]
 
-corretor(arq_csv, arq_entradas, arq_saida, 'e1')
+corretor(arq_csv, arq_entradas, arq_saida, 'e2')
