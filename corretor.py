@@ -2,6 +2,7 @@ import csv
 import os
 from subprocess import call
 import send_email as s
+from time import sleep
 
 # as pastas "codigos", "entradas" e "saidas", já devem estar criadas.
 
@@ -92,12 +93,20 @@ def correct(output_correct, file_output):
 	return ((correct/qtd_lines_file_ok)*100, incorrect_rows)
 
 def send_email_resp(assunto, text, email):
-	server = s.connectSmtp()
-	s.attempLogin(server)
+	"""Função que envia e-mail de resposta"""
+	command = "sendemail -f projeto.solenoide@gmail.com -t " + email + " -u " + "'"+ assunto + "'" + " -m " + "'" + text + "'" + " -s smtp.gmail.com:587 -o tls=yes -xu projeto.solenoide@gmail.com -xp bolodemacaco123"
+	os.system(command)
 
-	s.send_email(server, assunto, text, email)
+def get_arqs(exercicio, folder):
+	"""Pega os arquivos de entrada ou saida da pasta do respectivo exercicio"""
 
-	server.quit()
+	files = sorted(os.listdir(folder))
+	files_get = []
+	for file in files:
+		if str(exercicio) in file:
+			files_get.append(file)
+
+	return files_get
 
 def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 	"""
@@ -135,23 +144,17 @@ def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 						# executa
 						if(execute(name_output_bin, cin, name_output_cout)):
 							# verifica corretude
-							text_email += "arquivo teste: " + str(i+1) + " " + str(correct(arq_saida[i], name_output_cout)[0]) + "% correto" + "\n"
+							text_email += "arquivo teste: " + str(i+1) + ", " + str(correct(arq_saidas[i], name_output_cout)[0]) + "% correto" + "\n"
 						else:
 							text_email += "entrou em loop, verifique novamente seu código!"
 				else:
 					text_email += "erro de compilação meu chapa!"
 
 				# envia email pro camarada
-				send_email_resp(assunto_email, text_email, row[2])
+				# send_email_resp(assunto_email, text_email, row[2])
 				os.system("mv codigos/" + name + " " + "codigos_corrigidos")
 				print(text_email)
+				sleep(second_limit)
 
 	# apaga os arquivos criados
 	os.system("./apagar.sh")
-
-
-arq_csv = "nomes.csv"
-arq_entradas = ["entrada_e1_3.txt"]
-arq_saida = ["saida_e1_3.txt"]
-
-corretor(arq_csv, arq_entradas, arq_saida, 'e2')
