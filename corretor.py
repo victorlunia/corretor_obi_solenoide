@@ -85,8 +85,11 @@ def correct(output_correct, file_output):
 
 	# qtd erros
 	correct = 0
-
-	line_student = file_correct.readline()
+	try:
+		line_student = file_correct.readline()
+	except:
+		print("talvez um erro de acentuacao!!!")
+		return (0,0)
 
 	# compara as saidas
 	for line in file_ok:
