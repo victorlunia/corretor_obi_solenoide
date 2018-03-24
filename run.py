@@ -1,5 +1,11 @@
 import corretor as crt
-
-exercicio = "e1"
+import time
+exercicio = ["e1", "e2"]
 arq_csv = "nomes.csv"
-crt.corretor(arq_csv, crt.get_arqs(exercicio, "entradas/"), crt.get_arqs(exercicio, "saidas/"), exercicio)
+
+while(True):
+	print("executando")
+	for e in exercicio:
+		crt.corretor(arq_csv, crt.get_arqs(e, "entradas/"), crt.get_arqs(e, "saidas/"), e)
+		time.sleep(5)
+	time.sleep(60)
