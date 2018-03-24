@@ -3,6 +3,7 @@ import os
 from subprocess import call
 import send_email as s
 from time import sleep
+from datetime import datetime
 
 # as pastas "codigos", "entradas" e "saidas", já devem estar criadas.
 
@@ -10,18 +11,28 @@ from time import sleep
 second_limit = 2
 
 def make_dir():
+
+	now_data = datetime.now()
+
 	# pasta de saida dos arquivos compilados
 	if os.path.isdir("out"):
 		pass
 	else:
 		os.mkdir("out")
-	
+
+	# pasta de saida dos codigos corrigidos por data
+	if os.path.isdir("codigos_corrigidos/" + str(now_data.day) + "_" + str(now_data.month) + "_" + str(now_data.year)):
+		pass
+	else:
+		os.mkdir("codigos_corrigidos/" + str(now_data.day) + "_" + str(now_data.month) + "_" + str(now_data.year))
+
 	# pasta de saida dos arquivos executados
 	if os.path.isdir("cout"):
 		pass
 	else:
 		os.mkdir("cout")
 
+	# codigos corrigidos dos alunos
 	if os.path.isdir("codigos_corrigidos"):
 		pass
 	else:
@@ -152,9 +163,9 @@ def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 
 				# envia email pro camarada
 				# send_email_resp(assunto_email, text_email, row[2])
-				os.system("mv codigos/" + name + " " + "codigos_corrigidos")
+				now = datetime.now()
+				os.system("mv codigos/" + name + " " + "codigos_corrigidos/" + str(now.day) + "_" + str(now.month) + "_" + str(now.year))
 				print(text_email)
-				sleep(second_limit)
 
 	# apaga os arquivos criados
 	os.system("./apagar.sh")
