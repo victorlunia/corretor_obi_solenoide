@@ -137,8 +137,9 @@ def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 	with open(arq_csv, 'r') as file_name:
 		reader = csv.reader(file_name)
 		for row in reader:
+			print(row[0])
 			# nome do arquivo fonte
-			name = row[0]+ "_" + exercicio + ".cpp"
+			name = row[0] + "_" + exercicio + ".cpp"
 			
 			# nome do arquivo binario de saida
 			name_output_bin = row[0] + "_" + exercicio + ".out"
@@ -153,7 +154,7 @@ def corretor(arq_csv, arq_entradas, arq_saidas, exercicio):
 				# compila o codigo
 				if(compile(name, name_output_bin)):
 					# testa as entradas
-					text_email += "Eaeeee " + row[1].split(' ')[0] + " Blz? olha ae o resultado dos testes:\n"
+					text_email += "Eaeeee " + row[1].split(' ')[0] + " Blz? olha ae o resultado dos testes do exercicio " + exercicio + ":\n"
 					for i, cin in enumerate(arq_entradas): 
 						# executa
 						if(execute(name_output_bin, cin, name_output_cout)):
