@@ -2,20 +2,20 @@ import os
 from random import randint
 import corretor
 
-def gera_entradas(num_exercise, qtd_entradas=None, arq_entradas=None):
+def gera_entradas(num_exercise, qtd_entradas=None, qtd_testes=None, low=1, upr=100, arq_entradas=None):
 	
 	i = 0
+	line = ""
 	if arq_entradas == None:
-		for i in range(qtd_entradas):
-			cina = randint(-1000,1000)
-			cinb = randint(-1000,1000)
-			cinc = randint(-1000,1000)
-
-			line = str(cina) + " " + str(cinb) + " " + str(cinc)
-			
+		for i in range(qtd_testes):
+			for j in range(qtd_entradas):
+				var = randint(low, upr)
+				line += str(var) + " "
+			line += '\n'
 			arq = open("entradas/entrada_e" + str(num_exercise) + "_" + str(i).zfill(2)+ ".txt", 'w')
 			arq.write(line)
 			arq.close()
+			line = ""
 			i += 1
 	else:
 		for line in arq_entradas:
