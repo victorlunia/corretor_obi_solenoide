@@ -1,16 +1,21 @@
 import os
-from random import randint
+from random import randint, uniform
 import corretor
 
-def gera_entradas(num_exercise, qtd_entradas=None, qtd_testes=None, low=1, upr=100, arq_entradas=None):
+def gera_entradas(num_exercise, qtd_entradas=None, qtd_testes=None, low=1, upr=100, is_float = None, arq_entradas=None):
 	
 	i = 0
 	line = ""
 	if arq_entradas == None:
 		for i in range(qtd_testes):
-			for j in range(qtd_entradas):
-				var = randint(low, upr)
-				line += str(var) + " "
+			if(is_float == None):
+				for j in range(qtd_entradas):
+					var = randint(low, upr)
+					line += str(var) + " "
+			else:
+				for j in range(qtd_entradas):
+					var = round(uniform(low, upr),2)
+					line += str(var) + " "
 			line += '\n'
 			arq = open("entradas/entrada_e" + str(num_exercise) + "_" + str(i).zfill(2)+ ".txt", 'w')
 			arq.write(line)
